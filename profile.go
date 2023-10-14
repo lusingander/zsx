@@ -76,6 +76,9 @@ func resolveFilePath(elem ...string) (string, error) {
 func load[T any](path string, f func(*ini.Section) (T, bool)) ([]T, error) {
 	cfg, err := ini.Load(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	ss := cfg.Sections()
