@@ -31,7 +31,7 @@ type Config struct {
 
 func loadConfigs() ([]*Config, error) {
 	f := func(s *ini.Section) (*Config, bool) {
-		if name, found := strings.CutPrefix(s.Name(), "profile "); found {
+		if name, found := cutSectionProfile(s.Name()); found {
 			c := &Config{
 				name,
 			}
@@ -44,6 +44,16 @@ func loadConfigs() ([]*Config, error) {
 		return nil, err
 	}
 	return load(path, f)
+}
+
+func cutSectionProfile(name string) (string, bool) {
+	if s, found := strings.CutPrefix(name, "profile "); found {
+		return s, true
+	}
+	if s, found := strings.CutPrefix(name, "sso-session "); found {
+		return s, true
+	}
+	return "", false
 }
 
 type Credential struct {
